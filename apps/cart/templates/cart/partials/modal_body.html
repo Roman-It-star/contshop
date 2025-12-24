@@ -1,0 +1,89 @@
+<div class="hidden">
+  {% include "cart/partials/badge.html" with count=count oob=True %}
+</div>
+
+<div class="space-y-3">
+  <div class="flex items-center justify-between">
+    <div class="text-lg font-semibold">Корзина</div>
+    <div class="text-sm text-gray-600">Итого: <span class="font-semibold">{{ total }} ₽</span></div>
+  </div>
+{% if lines %}
+    <div class="space-y-3">
+      {% for line in lines %}
+        <div class="border rounded-xl p-4 flex items-center justify-between gap-4">
+          <div class="min-w-0">
+            <div class="font-medium truncate">{{ line.product.title }}</div>
+            <div class="text-sm text-gray-600 mt-1">
+              {% if line.product.price_sale %}{{ line.product.price_sale }} ₽{% else %}—{% endif %}
+              <span class="mx-1">·</span>
+              {{ line.product.get_availability_display }}
+            </div>
+            <div class="text-sm text-gray-700 mt-1">
+              Сумма: <span class="font-semibold">{{ line.line_total }} ₽</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-5">
+            <!-- минус -->
+            <form hx-post="{% url 'cart:set_qty' line.product.id %}"
+                  hx-target="#cart-modal-body"
+                  hx-swap="innerHTML">
+              {% csrf_token %}
+              <input type="hidden" name="qty" value="{{ line.qty|add:'-1' }}">
+              <button type="submit"
+                      class="w-9 h-9 rounded-lg border hover:bg-gray-50">
+                −
+              </button>
+            </form>
+
+            <!-- количество -->
+            <div class="w-10 text-center font-semibold">
+              {{ line.qty }}
+            </div>
+
+            <!-- плюс -->
+            <form hx-post="{% url 'cart:set_qty' line.product.id %}"
+                  hx-target="#cart-modal-body"
+                  hx-swap="innerHTML">
+              {% csrf_token %}
+              <input type="hidden" name="qty" value="{{ line.qty|add:'1' }}">
+              <button type="submit"
+                      class="w-9 h-9 rounded-lg border hover:bg-gray-50">
+                +
+              </button>
+            </form>
+
+            <!-- удалить -->
+            <form hx-post="{% url 'cart:remove' line.product.id %}"
+                  hx-target="#cart-modal-body"
+                  hx-swap="innerHTML">
+              {% csrf_token %}
+              <button type="submit"
+                      class="px-3 h-9 rounded-lg border hover:bg-gray-50 text-sm">
+                Удалить
+              </button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="border-t pt-3 flex items-center justify-between">
+      <div class="text-xs text-gray-500">
+        Итоговая сумма носит информационный характер (оплаты на сайте нет).
+      </div>
+      <div class="text-lg font-semibold">
+        {{ total }} ₽
+      </div>
+    </div>
+
+    <div class="flex justify-end">
+      <a href="/order/"
+         class="px-4 py-2 rounded-lg bg-black text-white text-sm hover:opacity-90">
+        Оформить заявку
+      </a>
+    </div>
+  </div>
+{% else %}
+  <div class="text-gray-600">Корзина пуста.</div>
+{% endif %}

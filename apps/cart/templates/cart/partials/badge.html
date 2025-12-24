@@ -1,0 +1,8 @@
+<span id="cart-badge"
+      class="inline-flex items-center gap-2"
+      {% if oob %}hx-swap-oob="true"{% endif %}>
+    <span>Корзина</span>
+    <span class="px-2 py-0.5 rounded bg-black text-white text-xs">
+        {{ count|default_if_none:0|default:0 }}
+    </span>
+</span>

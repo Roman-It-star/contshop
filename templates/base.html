@@ -8,17 +8,75 @@
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body>
+
+<body x-data="{ cartOpen: false }" class="min-h-screen bg-white">
+  <form style="display:none">{% csrf_token %}</form>
+
   <div class="max-w-6xl mx-auto p-4">
-    {% block content %}{% endblock %}
+    <header class="flex items-center justify-end mb-6">
+      <button
+        type="button"
+        class="px-4 py-2 rounded-lg border hover:bg-gray-50"
+        @click="cartOpen = true"
+        hx-get="{% url 'cart:modal' %}"
+        hx-target="#cart-modal-body"
+        hx-swap="innerHTML"
+        hx-on::after-request="htmx.ajax('GET', '{% url 'cart:badge' %}', '#cart-badge')"
+        <span
+          hx-get="{% url 'cart:badge' %}"
+          hx-trigger="load"
+          hx-swap="outerHTML"
+        >
+          {% include "cart/partials/badge.html" with count=0 %}
+        </span>
+      </button>
+    </header>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <!-- MODAL -->
+  <div x-show="cartOpen" x-cloak class="fixed inset-0 z-50">
+    <div class="absolute inset-0 bg-black/50" @click="cartOpen = false"></div>
+
+    <div class="relative mx-auto mt-20 w-full max-w-2xl px-4">
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b">
+          <div class="font-semibold text-lg">Корзина</div>
+          <button
+            type="button"
+            class="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50"
+            @click="cartOpen = false"
+          >
+            Закрыть
+          </button>
+        </div>
+
+        <!-- Контент корзины обновляется КАЖДЫЙ РАЗ при открытии (hx-get на кнопке в хедере) -->
+        <div id="cart-modal-body" class="p-5">
+          <div class="text-sm text-gray-600">Откройте корзину, чтобы загрузить содержимое.</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return "";
+    }
+
     document.body.addEventListener("htmx:configRequest", function (event) {
-      const token = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
-      if (token) {
-        event.detail.headers["X-CSRFToken"] = token;
-      }
+      const method = (event.detail.verb || "").toUpperCase();
+      const unsafe = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
+      if (!unsafe) return;
+
+      const token = getCookie("csrftoken");
+      if (token) event.detail.headers["X-CSRFToken"] = token;
     });
   </script>
 </body>
