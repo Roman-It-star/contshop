@@ -1,0 +1,24 @@
+{% if products %}
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {% for p in products %}
+      <div class="border rounded p-4 space-y-2">
+        <div class="font-semibold">{{ p.title }}</div>
+        <div class="text-sm text-gray-600">{{ p.get_availability_display }}</div>
+
+        {% if p.price_sale %}
+          <div class="font-bold">{{ p.price_sale }} ₽</div>
+        {% endif %}
+
+        <div class="text-sm text-gray-700 line-clamp-3">{{ p.description }}</div>
+
+        <div class="flex flex-wrap gap-1 text-xs text-gray-600">
+          {% for c in p.categories.all %}
+            <span class="px-2 py-1 border rounded">{{ c.title }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-gray-600">Товары не найдены.</div>
+{% endif %}
