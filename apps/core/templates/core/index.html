@@ -1,16 +1,148 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-<div class="space-y-4">
-  <h1 class="text-2xl font-bold">Продажа и аренда морских контейнеров</h1>
+  <!-- HERO -->
+  <section class="py-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-bold leading-tight">
+          Морские контейнеры для продажи и аренды
+        </h1>
+        <p class="mt-4 text-gray-600 text-base md:text-lg">
+          Подберём контейнер под задачу: склад, бытовка, перевозка, хранение. Работаем быстро, прозрачно и по договору.
+        </p>
 
-  <p class="text-gray-700">
-    Базовая настройка завершена. Дальше — каталог, фильтры (HTMX), корзина, заявки и Telegram.
-  </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="{% url 'catalog:list' %}"
+             class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-black text-white hover:opacity-90">
+            Перейти в каталог
+          </a>
 
-  <div class="flex gap-2">
-    <a class="px-4 py-2 rounded-lg bg-black text-white" href="/admin/">Админка</a>
-    <a class="px-4 py-2 rounded-lg border hover:bg-gray-50" href="/catalog/">Открыть каталог</a>
-  </div>
-</div>
+          <!-- Пока нет формы — ведём в каталог (позже заменим на checkout) -->
+          <a href="{% url 'catalog:list' %}"
+             class="inline-flex items-center justify-center px-5 py-3 rounded-xl border hover:bg-gray-50">
+            Оставить заявку
+          </a>
+        </div>
+      </div>
+
+      <!-- Картинка-заглушка (можешь заменить на свою) -->
+      <div class="rounded-2xl border bg-gray-50 p-6">
+        <img
+          src="{% static 'img/hero/1.jpg' %}"
+          alt="Морской контейнер"
+          class="aspect-[16/10] w-full rounded-xl border object-cover"
+        />
+        <p class="mt-3 text-sm text-gray-500">
+          Быстрая консультация и подбор: под задачу, бюджет и сроки.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- OFFER -->
+  <section class="py-8">
+    <h2 class="text-2xl font-semibold">Что предлагаем</h2>
+
+    <div class="mt-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="rounded-2xl border p-5">
+        <div class="font-semibold">Продажа</div>
+        <p class="mt-2 text-sm text-gray-600">
+          Новые и б/у контейнеры. Подберём под склад, хранение, перевозки.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border p-5">
+        <div class="font-semibold">Аренда</div>
+        <p class="mt-2 text-sm text-gray-600">
+          Аренда под стройку, временное хранение или склад на площадке.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border p-5">
+        <div class="font-semibold">Доставка и логистика</div>
+        <p class="mt-2 text-sm text-gray-600">
+          Организуем доставку и разгрузку. Подскажем оптимальный способ.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFITS -->
+  <section class="py-8">
+    <h2 class="text-2xl font-semibold">Почему мы</h2>
+
+    <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="rounded-2xl border p-5">
+        <div class="font-semibold">Честное состояние</div>
+        <p class="mt-2 text-sm text-gray-600">
+          Фиксируем состояние и комплектацию. Фото/видео перед сделкой.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border p-5">
+        <div class="font-semibold">Быстрая обработка заявки</div>
+        <p class="mt-2 text-sm text-gray-600">
+          Подбор и расчёт в течение дня. Уточняем детали и предлагаем варианты.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border p-5">
+        <div class="font-semibold">Удобная оплата и документы</div>
+        <p class="mt-2 text-sm text-gray-600">
+          Договор, закрывающие документы, прозрачные условия.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border p-5">
+        <div class="font-semibold">Помощь с выбором</div>
+        <p class="mt-2 text-sm text-gray-600">
+          20/40, Standard/HC, реф, под бытовку — объясним и подскажем.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="py-8">
+    <h2 class="text-2xl font-semibold">Как работаем</h2>
+
+    <ol class="mt-5 grid grid-cols-1 md:grid-cols-4 gap-4">
+      <li class="rounded-2xl border p-5">
+        <div class="text-sm text-gray-500">Шаг 1</div>
+        <div class="mt-1 font-semibold">Вы выбираете контейнер</div>
+        <p class="mt-2 text-sm text-gray-600">В каталоге или через консультацию.</p>
+      </li>
+      <li class="rounded-2xl border p-5">
+        <div class="text-sm text-gray-500">Шаг 2</div>
+        <div class="mt-1 font-semibold">Согласуем детали</div>
+        <p class="mt-2 text-sm text-gray-600">Состояние, цену, доставку, сроки.</p>
+      </li>
+      <li class="rounded-2xl border p-5">
+        <div class="text-sm text-gray-500">Шаг 3</div>
+        <div class="mt-1 font-semibold">Оформляем документы</div>
+        <p class="mt-2 text-sm text-gray-600">Договор и закрывающие документы.</p>
+      </li>
+      <li class="rounded-2xl border p-5">
+        <div class="text-sm text-gray-500">Шаг 4</div>
+        <div class="mt-1 font-semibold">Доставка и передача</div>
+        <p class="mt-2 text-sm text-gray-600">Привезём и разгрузим при необходимости.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-10">
+    <div class="rounded-2xl border bg-gray-50 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <div class="text-xl font-semibold">Готовы подобрать контейнер?</div>
+        <div class="mt-1 text-sm text-gray-600">Перейдите в каталог и добавьте подходящие позиции в корзину.</div>
+      </div>
+      <a href="{% url 'catalog:list' %}"
+         class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-black text-white hover:opacity-90">
+        Открыть каталог
+      </a>
+    </div>
+  </section>
 {% endblock %}
