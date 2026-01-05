@@ -14,7 +14,10 @@ def catalog_page(request):
 
 
 def product_detail(request, slug: str):
-    product = get_object_or_404(Product.objects.prefetch_related("categories"), slug=slug)
+    product = get_object_or_404(
+        Product.objects.prefetch_related("categories", "images"),
+        slug=slug
+    )
 
     context = {
         "product": product,

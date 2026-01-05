@@ -79,5 +79,66 @@
       if (token) event.detail.headers["X-CSRFToken"] = token;
     });
   </script>
+
+  <script>
+    function lightbox({ images, startIndex = 0 }) {
+      return {
+        images: images || [],
+        open: false,
+        current: startIndex || 0,
+
+        // swipe
+        touchX: null,
+
+        openAt(i) {
+          this.current = i;
+          this.open = true;
+          document.body.classList.add("overflow-hidden");
+        },
+
+        close() {
+          this.open = false;
+          document.body.classList.remove("overflow-hidden");
+        },
+
+        next() {
+          if (!this.images.length) return;
+          this.current = (this.current + 1) % this.images.length;
+        },
+
+        prev() {
+          if (!this.images.length) return;
+          this.current = (this.current - 1 + this.images.length) % this.images.length;
+        },
+
+        bindKeys() {
+          window.addEventListener("keydown", (e) => {
+            if (!this.open) return;
+            if (e.key === "Escape") this.close();
+            if (e.key === "ArrowRight") this.next();
+            if (e.key === "ArrowLeft") this.prev();
+          });
+        },
+
+        onTouchStart(e) {
+          if (!this.open) return;
+          this.touchX = e.changedTouches?.[0]?.clientX ?? null;
+        },
+
+        onTouchEnd(e) {
+          if (!this.open) return;
+          const endX = e.changedTouches?.[0]?.clientX ?? null;
+          if (this.touchX === null || endX === null) return;
+
+          const dx = endX - this.touchX;
+          // порог свайпа
+          if (dx > 50) this.prev();
+          if (dx < -50) this.next();
+
+          this.touchX = null;
+        },
+      };
+    }
+  </script>
 </body>
 </html>

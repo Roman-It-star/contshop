@@ -21,3 +21,9 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ("title", "slug")
     prepopulated_fields = {"slug": ("title",)}
     inlines = [ProductImageInline]
+
+
+@admin.register(ProductImage)
+class ProductImageAdmin(admin.ModelAdmin):
+    list_display = ("product", "sort_order", "id")
+    list_filter = ("product",)
