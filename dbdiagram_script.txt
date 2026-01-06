@@ -1,0 +1,158 @@
+Table django_migrations {
+  id integer [pk, increment]
+  app varchar(255)
+  name varchar(255)
+  applied datetime
+}
+
+Table django_content_type {
+  id integer [pk, increment]
+  app_label varchar(100)
+  model varchar(100)
+}
+
+Table auth_group {
+  id integer [pk, increment]
+  name varchar(150) [unique]
+}
+
+Table auth_permission {
+  id integer [pk, increment]
+  content_type_id integer
+  codename varchar(100)
+  name varchar(255)
+}
+
+Table auth_group_permissions {
+  id integer [pk, increment]
+  group_id integer
+  permission_id integer
+}
+
+Table customers_customer {
+  id integer [pk, increment]
+  password varchar(128)
+  last_login datetime [null]
+  is_superuser bool
+  username varchar(150) [unique]
+  first_name varchar(150)
+  last_name varchar(150)
+  email varchar(254)
+  is_staff bool
+  is_active bool
+  date_joined datetime
+  phone varchar(20)
+  company varchar(100)
+}
+
+Table customers_customer_groups {
+  id integer [pk, increment]
+  customer_id bigint
+  group_id integer
+}
+
+Table customers_customer_user_permissions {
+  id integer [pk, increment]
+  customer_id bigint
+  permission_id integer
+}
+
+Table django_admin_log {
+  id integer [pk, increment]
+  object_id text [null]
+  object_repr varchar(200)
+  action_flag smallint
+  change_message text
+  content_type_id integer [null]
+  user_id bigint
+  action_time datetime
+}
+
+Table catalog_category {
+  id integer [pk, increment]
+  title varchar(120) [unique]
+  slug varchar(140) [unique]
+}
+
+Table catalog_product {
+  id integer [pk, increment]
+  title varchar(200)
+  slug varchar(220) [unique]
+  description text
+  size varchar(2)
+  container_type varchar(20)
+  condition varchar(10)
+  is_for_sale bool
+  is_for_rent bool
+  price_sale decimal [null]
+  rent_terms varchar(200)
+  availability varchar(20)
+  created_at datetime
+}
+
+Table catalog_product_categories {
+  id integer [pk, increment]
+  product_id bigint
+  category_id bigint
+}
+
+Table catalog_productimage {
+  id integer [pk, increment]
+  image varchar(100)
+  sort_order integer
+  product_id bigint
+}
+
+Table orders_order {
+  id integer [pk, increment]
+  created_at datetime
+  name varchar(120)
+  phone varchar(32)
+  email varchar(254)
+  comment text
+  total decimal
+  tg_status varchar(16)
+  attempts_count integer
+  last_attempt_at datetime [null]
+  last_error_short varchar(255)
+  customer_id bigint [null]
+}
+
+Table orders_orderitem {
+  id integer [pk, increment]
+  title varchar(200)
+  price decimal
+  qty integer
+  line_total decimal
+  order_id bigint
+  product_id bigint
+}
+
+Table django_session {
+  session_key varchar(40) [pk]
+  session_data text
+  expire_date datetime
+}
+
+/* Relationships */
+Ref: auth_permission.content_type_id > django_content_type.id
+Ref: auth_group_permissions.group_id > auth_group.id
+Ref: auth_group_permissions.permission_id > auth_permission.id
+
+Ref: customers_customer_groups.customer_id > customers_customer.id
+Ref: customers_customer_groups.group_id > auth_group.id
+
+Ref: customers_customer_user_permissions.customer_id > customers_customer.id
+Ref: customers_customer_user_permissions.permission_id > auth_permission.id
+
+Ref: django_admin_log.content_type_id > django_content_type.id
+Ref: django_admin_log.user_id > customers_customer.id
+
+Ref: catalog_product_categories.product_id > catalog_product.id
+Ref: catalog_product_categories.category_id > catalog_category.id
+
+Ref: catalog_productimage.product_id > catalog_product.id
+
+Ref: orders_order.customer_id > customers_customer.id
+Ref: orders_orderitem.order_id > orders_order.id
+Ref: orders_orderitem.product_id > catalog_product.id
