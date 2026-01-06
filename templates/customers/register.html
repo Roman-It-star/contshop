@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-md mx-auto py-12 px-4">
+    <h1 class="text-2xl font-bold mb-6 text-center">Регистрация</h1>
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="w-full bg-black text-white py-2 rounded-lg">Зарегистрироваться</button>
+    </form>
+    <p class="mt-4 text-center">
+        <a href="{% url 'customers:login' %}" class="text-blue-600 hover:underline">Уже есть аккаунт?</a>
+    </p>
+</div>
+{% endblock %}

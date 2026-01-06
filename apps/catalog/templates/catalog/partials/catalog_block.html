@@ -1,0 +1,21 @@
+<div id="catalog-block" class="space-y-4">
+  <div class="flex flex-wrap gap-2">
+    <button
+      class="px-3 py-2 rounded border text-sm {% if active_slug == 'all' %}bg-black text-white{% endif %}"
+      hx-get="{% url 'catalog:partial_list' %}?category=all"
+      hx-target="#catalog-block"
+      hx-swap="outerHTML"
+    >Все</button>
+
+    {% for c in categories %}
+      <button
+        class="px-3 py-2 rounded border text-sm {% if active_slug == c.slug %}bg-black text-white{% endif %}"
+        hx-get="{% url 'catalog:partial_list' %}?category={{ c.slug }}"
+        hx-target="#catalog-block"
+        hx-swap="outerHTML"
+      >{{ c.title }}</button>
+    {% endfor %}
+  </div>
+
+  {% include "catalog/partials/product_list.html" %}
+</div>

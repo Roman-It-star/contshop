@@ -1,0 +1,54 @@
+<div class="hidden">
+  {% include "cart/partials/badge.html" with count=count oob=True %}
+</div>
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <div class="text-lg font-semibold">Оформление заявки</div>
+    <div class="text-sm text-gray-600">Итого: <span class="font-semibold">{{ total }} ₽</span></div>
+  </div>
+
+  {% if errors.cart %}
+    <div class="text-sm text-red-600">{{ errors.cart }}</div>
+  {% endif %}
+
+  <form
+    hx-post="{% url 'orders:checkout_submit' %}"
+    hx-target="#cart-modal-body"
+    hx-swap="innerHTML"
+    class="space-y-3"
+  >
+    {% csrf_token %}
+
+    <div>
+      <label class="text-sm text-gray-700">Имя *</label>
+      <input name="name" value="{{ name }}" class="w-full mt-1 px-3 py-2 rounded-lg border" />
+      {% if errors.name %}<div class="text-xs text-red-600 mt-1">{{ errors.name }}</div>{% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div>
+        <label class="text-sm text-gray-700">Телефон</label>
+        <input name="phone" value="{{ phone }}" class="w-full mt-1 px-3 py-2 rounded-lg border" />
+      </div>
+      <div>
+        <label class="text-sm text-gray-700">Email</label>
+        <input name="email" value="{{ email }}" class="w-full mt-1 px-3 py-2 rounded-lg border" />
+      </div>
+    </div>
+
+    {% if errors.contact %}
+      <div class="text-xs text-red-600">{{ errors.contact }}</div>
+    {% endif %}
+
+    <div>
+      <label class="text-sm text-gray-700">Комментарий</label>
+      <textarea name="comment" class="w-full mt-1 px-3 py-2 rounded-lg border" rows="3">{{ comment }}</textarea>
+    </div>
+
+    <div class="border-t pt-3 flex justify-end gap-2">
+      <button type="submit" class="px-4 py-2 rounded-lg bg-black text-white text-sm hover:opacity-90">
+        Отправить заявку
+      </button>
+    </div>
+  </form>
+</div>

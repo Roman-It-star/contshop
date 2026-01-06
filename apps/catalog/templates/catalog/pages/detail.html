@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="mb-4">
+    <a href="{% url 'catalog:list' %}" class="underline">← Назад в каталог</a>
+  </div>
+
+  <h1 class="text-2xl font-bold mb-2">{{ product.title }}</h1>
+{% with images=product.images.all %}
+  {% if images %}
+    <div
+      x-data="lightbox({
+        images: [{% for img in images %}'{{ img.image.url }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+        startIndex: 0
+      })"
+      x-init="bindKeys()"
+      class="mt-4"
+    >
+      {# Главная картинка #}
+      <button
+        type="button"
+        class="block w-full max-w-3xl"
+        @click="openAt(0)"
+      >
+        <img
+          src="{{ images.0.image.url }}"
+          alt="{{ product.title }}"
+          class="w-full max-w-3xl rounded-xl border object-cover"
+        >
+      </button>
+
+      {# Миниатюры #}
+      <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl">
+        {% for img in images %}
+          <button
+            type="button"
+            class="block"
+            @click="openAt({{ forloop.counter0 }})"
+          >
+            <img
+              src="{{ img.image.url }}"
+              alt=""
+              class="w-full h-28 rounded-lg border object-cover hover:opacity-90"
+              loading="lazy"
+            >
+          </button>
+        {% endfor %}
+      </div>
+
+      {# Fullscreen overlay #}
+      <div
+        x-show="open"
+        x-cloak
+        class="fixed inset-0 z-[60] bg-black/90"
+        @click.self="close()"
+        @touchstart="onTouchStart($event)"
+        @touchend="onTouchEnd($event)"
+      >
+        {# Крестик справа сверху #}
+        <button
+          type="button"
+          class="absolute top-4 right-4 inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20"
+          @click="close()"
+          aria-label="Закрыть"
+        >
+          ✕
+        </button>
+
+        {# Стрелки #}
+        <button
+          type="button"
+          class="absolute left-4 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 text-white hover:bg-white/20"
+          @click.stop="prev()"
+          aria-label="Назад"
+        >
+          ‹
+        </button>
+
+        <button
+          type="button"
+          class="absolute right-4 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 text-white hover:bg-white/20"
+          @click.stop="next()"
+          aria-label="Вперед"
+        >
+          ›
+        </button>
+
+        {# Сама картинка #}
+        <div class="w-full h-full flex items-center justify-center p-6">
+          <img
+            :src="images[current]"
+            class="max-h-full max-w-full object-contain select-none"
+            @click.stop
+            draggable="false"
+          >
+        </div>
+
+        {# Индикатор #}
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/80 text-sm">
+          <span x-text="current + 1"></span> / <span x-text="images.length"></span>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="mt-4 w-full max-w-3xl rounded-xl border bg-gray-50 p-6 text-sm text-gray-500">
+      Фото пока не добавлено
+    </div>
+  {% endif %}
+{% endwith %}
+  <div class="text-sm text-gray-600 mb-3">{{ product.get_availability_display }}</div>
+
+  {% if product.price_sale %}
+    <div class="text-xl font-semibold mb-3">{{ product.price_sale }} ₽</div>
+  {% endif %}
+
+  <div class="text-gray-800 mb-4">{{ product.description }}</div>
+
+  <div class="flex flex-wrap gap-2 mb-6">
+    {% for c in product.categories.all %}
+      <span class="px-2 py-1 border rounded text-sm">{{ c.title }}</span>
+    {% endfor %}
+  </div>
+
+  <form hx-post="{% url 'cart:add' product.id %}"
+        hx-target="#cart-badge"
+        hx-swap="outerHTML">
+    {% csrf_token %}
+    <button type="submit" class="px-4 py-2 rounded bg-black text-white">
+      В корзину
+    </button>
+  </form>
+{% endblock %}

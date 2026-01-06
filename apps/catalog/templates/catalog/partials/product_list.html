@@ -1,0 +1,57 @@
+{% if products %}
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for p in products %}
+      <div class="border rounded-xl p-4 space-y-2 bg-white">
+        {% with img=p.images.all|first %}
+          {% if img %}
+            <img
+              src="{{ img.image.url }}"
+              alt="{{ p.title }}"
+              class="w-full h-44 object-cover rounded border"
+              loading="lazy"
+            >
+          {% else %}
+            <div class="w-full h-44 rounded border bg-gray-50 flex items-center justify-center text-sm text-gray-400">
+              Нет фото
+            </div>
+          {% endif %}
+        {% endwith %}
+        <a class="font-semibold underline" href="{% url 'catalog:detail' p.slug %}">
+          {{ p.title }}
+        </a>
+        {% if p.image %}
+          <img src="{{ p.image.url }}" alt="{{ p.title }}" class="w-full h-44 object-cover rounded border">
+        {% endif %}
+        
+        <div class="text-sm text-gray-600">{{ p.get_availability_display }}</div>
+
+        {% if p.price_sale %}
+          <div class="text-lg font-semibold">{{ p.price_sale }} ₽</div>
+        {% endif %}
+
+        <div class="text-sm text-gray-700">
+          {{ p.description }}
+        </div>
+
+        <div class="flex flex-wrap gap-1 text-xs text-gray-600">
+          {% for c in p.categories.all %}
+            <span class="px-2 py-1 border rounded">{{ c.title }}</span>
+          {% endfor %}
+        </div>
+
+        <div class="pt-2">
+          <form hx-post="{% url 'cart:add' p.id %}"
+                hx-swap="none"
+                hx-disabled-elt="find button">
+            {% csrf_token %}
+            <button type="submit" class="px-3 py-2 rounded bg-black text-white text-sm">
+              В корзину
+            </button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-gray-600">Товары не найдены.</div>
+{% endif %}

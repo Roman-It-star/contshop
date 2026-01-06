@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>contshop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body x-data="{ cartOpen: false }" class="min-h-screen bg-white flex flex-col">
+  <form style="display:none">{% csrf_token %}</form>
+
+  <div class="max-w-6xl mx-auto p-4 w-full flex-1">
+      <header class="w-full flex items-center justify-between mb-6">
+  <!-- СЛЕВА: название -->
+  <a href="{% url 'core:index' %}" class="inline-flex items-center px-4 py-2 rounded-lg border hover:bg-gray-50">
+    <span class="text-xl font-extrabold tracking-tight">contshop</span>
+  </a>
+
+  <!-- СПРАВА: кабинет + корзина -->
+  <div class="flex items-center gap-2">
+    {% if user.is_authenticated %}
+      <a href="{% url 'customers:profile' %}" class="px-4 py-2 rounded-lg border hover:bg-gray-50 text-sm">
+        {{ user.username }}
+      </a>
+    {% else %}
+      <a href="{% url 'customers:login' %}" class="px-4 py-2 rounded-lg border hover:bg-gray-50 text-sm">
+        Войти
+      </a>
+    {% endif %}
+
+    <button
+      type="button"
+      class="px-4 py-2 rounded-lg border hover:bg-gray-50"
+      @click="cartOpen = true"
+      hx-get="{% url 'cart:modal' %}"
+      hx-target="#cart-modal-body"
+      hx-swap="innerHTML"
+      hx-on::after-request="htmx.ajax('GET', '{% url 'cart:badge' %}', '#cart-badge')"
+    >
+      {% include "cart/partials/badge.html" with count=0 %}
+    </button>
+  </div>
+</header>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+
+  <!-- MODAL -->
+  <footer class="mt-12 bg-gray-50 border-t">
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Brand -->
+      <div class="lg:col-span-4">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl border bg-gray-50 flex items-center justify-center">
+            <!-- простая “иконка” контейнера -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="text-gray-700">
+              <path d="M3 7.5L12 3l9 4.5v9L12 21l-9-4.5v-9Z" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M3 7.5l9 4.5 9-4.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 12v9" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-lg font-semibold tracking-tight">contshop</div>
+          </div>
+        </div>
+        <div class="mt-10 text-xs text-gray-500">
+          Оплата на сайте не производится — заявка передаётся менеджеру.
+        </div>
+      </div>
+
+      <!-- Links -->
+      <div class="lg:col-span-3">
+        <div class="text-sm font-semibold">Навигация</div>
+        <ul class="mt-3 space-y-2 text-sm text-gray-600">
+          <li><a class="hover:underline" href="{% url 'core:index' %}">Главная</a></li>
+          <li><a class="hover:underline" href="{% url 'catalog:list' %}">Каталог</a></li>
+          <li><a class="hover:underline" href="#offer">Что предлагаем</a></li>
+          <li><a class="hover:underline" href="#why">Почему мы</a></li>
+          <li><a class="hover:underline" href="#faq">Вопросы</a></li>
+        </ul>
+      </div>
+
+      <!-- Contacts -->
+      <div class="lg:col-span-5">
+        <div class="text-sm font-semibold">Контакты</div>
+
+        <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600">
+          <div class="rounded-2xl border p-4">
+            <div class="text-xs text-gray-500">Телефон</div>
+            <div class="mt-1 text-gray-900 font-medium">+7 (___) ___-__-__</div>
+            <div class="mt-3 text-xs text-gray-500">Telegram</div>
+            <div class="mt-1 text-gray-900 font-medium">@contshop</div>
+          </div>
+
+          <div class="rounded-2xl border p-4">
+            <div class="text-xs text-gray-500">Email</div>
+            <div class="mt-1 text-gray-900 font-medium">sales@contshop.ru</div>
+            <div class="mt-3 text-xs text-gray-500">Режим работы</div>
+            <div class="mt-1 text-gray-900 font-medium">Пн–Сб: 09:00–19:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="bg-gray-100 border-t">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-xs text-gray-600 flex flex-col md:flex-row gap-2 md:items-center md:justify-between">
+      <div>© {% now "Y" %} contshop. Все права защищены.</div>
+      <div class="flex flex-wrap gap-x-4 gap-y-2">
+        <a href="#" class="hover:underline">Политика конфиденциальности</a>
+        <a href="#" class="hover:underline">Публичная оферта</a>
+        <a href="#" class="hover:underline">Согласие на обработку данных</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  <!-- MODAL -->
+  <div x-show="cartOpen" x-cloak class="fixed inset-0 z-50">
+    <div class="absolute inset-0 bg-black/50" @click="cartOpen = false"></div>
+
+    <div class="relative mx-auto mt-20 w-full max-w-2xl px-4">
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b">
+          <div class="font-semibold text-lg">Корзина</div>
+          <button
+            type="button"
+            class="px-3 py-1.5 rounded-lg border text-sm hover:bg-gray-50"
+            @click="cartOpen = false"
+          >
+            Закрыть
+          </button>
+        </div>
+
+        <!-- Контент корзины обновляется КАЖДЫЙ РАЗ при открытии (hx-get на кнопке в хедере) -->
+        <div id="cart-modal-body" class="p-5">
+          <div class="text-sm text-gray-600">Откройте корзину, чтобы загрузить содержимое.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return "";
+    }
+
+    document.body.addEventListener("htmx:configRequest", function (event) {
+      const method = (event.detail.verb || "").toUpperCase();
+      const unsafe = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
+      if (!unsafe) return;
+
+      const token = getCookie("csrftoken");
+      if (token) event.detail.headers["X-CSRFToken"] = token;
+    });
+  </script>
+
+  <script>
+    function lightbox({ images, startIndex = 0 }) {
+      return {
+        images: images || [],
+        open: false,
+        current: startIndex || 0,
+
+        // swipe
+        touchX: null,
+
+        openAt(i) {
+          this.current = i;
+          this.open = true;
+          document.body.classList.add("overflow-hidden");
+        },
+
+        close() {
+          this.open = false;
+          document.body.classList.remove("overflow-hidden");
+        },
+
+        next() {
+          if (!this.images.length) return;
+          this.current = (this.current + 1) % this.images.length;
+        },
+
+        prev() {
+          if (!this.images.length) return;
+          this.current = (this.current - 1 + this.images.length) % this.images.length;
+        },
+
+        bindKeys() {
+          window.addEventListener("keydown", (e) => {
+            if (!this.open) return;
+            if (e.key === "Escape") this.close();
+            if (e.key === "ArrowRight") this.next();
+            if (e.key === "ArrowLeft") this.prev();
+          });
+        },
+
+        onTouchStart(e) {
+          if (!this.open) return;
+          this.touchX = e.changedTouches?.[0]?.clientX ?? null;
+        },
+
+        onTouchEnd(e) {
+          if (!this.open) return;
+          const endX = e.changedTouches?.[0]?.clientX ?? null;
+          if (this.touchX === null || endX === null) return;
+
+          const dx = endX - this.touchX;
+          // порог свайпа
+          if (dx > 50) this.prev();
+          if (dx < -50) this.next();
+
+          this.touchX = null;
+        },
+      };
+    }
+  </script>
+</body>
+</html>
