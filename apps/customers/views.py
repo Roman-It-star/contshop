@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from apps.orders.models import Order
 from .forms import RegisterForm
-
+from django.views.decorators.http import require_POST
 # Create your views here.
 
 @login_required
@@ -21,3 +21,8 @@ def register(request):
     else:
         form = RegisterForm()
     return render(request, 'customers/register.html', {'form': form})
+
+@require_POST
+def logout_view(request):
+    logout(request)
+    return redirect("/")
