@@ -9,10 +9,7 @@ urlpatterns = [
     path("catalog/", include("apps.catalog.urls")),
     path("cart/", include("apps.cart.urls")),
     path("orders/", include("apps.orders.urls")),
-<<<<<<< HEAD
-=======
     path("accounts/", include("apps.customers.urls"))
->>>>>>> feature/from-archive
 ]
 
 if settings.DEBUG:
