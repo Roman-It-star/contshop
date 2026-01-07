@@ -1,7 +1,9 @@
 from pathlib import Path
+from dotenv import load_dotenv
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-secret-key")
 hosts = os.environ.get("DJANGO_ALLOWED_HOSTS") or "localhost,127.0.0.1"
@@ -59,19 +61,19 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
+            "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DB_NAME", "contshop"),
+            "USER": os.getenv("DB_USER", "contshop_user"),
+            "PASSWORD": os.getenv("DB_PASSWORD", ""),
+            "HOST": os.getenv("DB_HOST", "127.0.0.1"),
+            "PORT": os.getenv("DB_PORT", "5432"),
+            "CONN_MAX_AGE": 60,
+        }
 #    "default": {
-#        "ENGINE": "django.db.backends.postgresql",
-#        "NAME": os.environ.get("POSTGRES_DB", "contshop"),
-#        "USER": os.environ.get("POSTGRES_USER", "contshop"),
-#        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "contshop"),
-#        "HOST": os.environ.get("POSTGRES_HOST", "db"),
-#        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
-#    }
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+#        "ENGINE": "django.db.backends.sqlite3",
+#        "NAME": BASE_DIR / "db.sqlite3",
     }
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
