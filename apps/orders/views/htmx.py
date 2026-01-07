@@ -12,14 +12,32 @@ def checkout_modal(request):
     lines = cart_services.get_lines(request.session)
     total = cart_services.get_total(request.session)
 
+<<<<<<< HEAD
+=======
+    # Автозаполнение для авторизованных
+    name = ""
+    phone = ""
+    email = ""
+    if request.user.is_authenticated:
+        name = request.user.get_full_name() or request.user.username
+        email = request.user.email
+        phone = getattr(request.user, 'phone', '') or ''
+
+>>>>>>> feature/from-archive
     return render(
         request,
         "orders/partials/checkout_form.html",
         {
             "errors": {},
+<<<<<<< HEAD
             "name": "",
             "phone": "",
             "email": "",
+=======
+            "name": name,
+            "phone": phone,
+            "email": email,
+>>>>>>> feature/from-archive
             "comment": "",
             "lines": lines,
             "total": total,
@@ -69,6 +87,10 @@ def checkout_submit(request):
             email=email,
             comment=comment,
             total=Decimal("0.00"),
+<<<<<<< HEAD
+=======
+            customer=request.user if request.user.is_authenticated else None,
+>>>>>>> feature/from-archive
         )
 
         items_total = Decimal("0.00")

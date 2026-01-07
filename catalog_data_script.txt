@@ -1,0 +1,8 @@
+# dump over Django
+python -Xutf8 manage.py dumpdata catalog -o catalog_data.json
+
+# data exported 
+~/catalog_data.json
+
+# load over Django
+python manage.py loaddata catalog_data.json

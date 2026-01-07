@@ -22,6 +22,10 @@ INSTALLED_APPS = [
     "apps.cart",
     "apps.orders",
     "apps.notifications",
+<<<<<<< HEAD
+=======
+    'apps.customers'
+>>>>>>> feature/from-archive
 ]
 
 MIDDLEWARE = [
@@ -93,4 +97,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "http://localhost,http://127.0.0.1").split(",") if o.strip()]
 
 SESSION_COOKIE_SAMESITE = "Lax"
+<<<<<<< HEAD
 CSRF_COOKIE_SAMESITE = "Lax"
+=======
+CSRF_COOKIE_SAMESITE = "Lax"
+
+AUTH_USER_MODEL = 'customers.Customer'
+
+LOGIN_REDIRECT_URL = 'customers:profile'
+LOGOUT_REDIRECT_URL = 'core:index'
+LOGIN_URL = 'customers:login'
+
+>>>>>>> feature/from-archive

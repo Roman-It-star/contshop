@@ -1,8 +1,13 @@
 from decimal import Decimal
 from django.db import models
 from django.core.validators import MinValueValidator
+<<<<<<< HEAD
 
 from apps.catalog.models import Product
+=======
+from apps.catalog.models import Product
+from apps.customers.models import Customer
+>>>>>>> feature/from-archive
 
 
 class Order(models.Model):
@@ -23,6 +28,18 @@ class Order(models.Model):
     email = models.EmailField("Email", blank=True)
     comment = models.TextField("Комментарий", blank=True)
 
+<<<<<<< HEAD
+=======
+    customer = models.ForeignKey(
+        Customer,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='orders',
+        verbose_name='Клиент'
+    )
+    
+>>>>>>> feature/from-archive
     total = models.DecimalField(
         "Итого",
         max_digits=12,

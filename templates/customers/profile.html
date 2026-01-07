@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8 px-4">
+    <h1 class="text-2xl font-bold mb-6">Личный кабинет</h1>
+    
+    <div class="bg-white rounded-lg border p-6 mb-6">
+        <h2 class="text-lg font-semibold mb-2">{{ user.username }}</h2>
+        <p>Email: {{ user.email }}</p>
+        <p>Телефон: {{ user.phone|default:"—" }}</p>
+        {% if request.user.is_authenticated %}
+    <form method="post" action="{% url 'customers:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="px-4 py-2 rounded-lg border hover:bg-gray-50">
+        Выйти
+        </button>
+    </form>
+    {% endif %}
+
+    </div>
+
+    <h2 class="text-xl font-semibold mb-4">Мои заявки</h2>
+    {% if orders %}
+        {% for order in orders %}
+        <div class="bg-white rounded-lg border p-4 mb-3">
+            <div class="flex justify-between">
+                <span>Заявка #{{ order.id }}</span>
+                <span class="text-gray-500">{{ order.created_at|date:"d.m.Y" }}</span>
+            </div>
+            <p class="text-lg font-semibold">{{ order.total }} ₽</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-gray-500">У вас пока нет заявок</p>
+    {% endif %}
+</div>
+{% endblock %}
