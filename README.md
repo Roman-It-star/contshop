@@ -12,7 +12,6 @@
 - **DB:** PostgreSQL (основная БД; проект переведён на Postgres)  
   - SQLite можно использовать при необходимости для простого локального запуска
 - **Frontend:** Django Templates + TailwindCSS (CDN) + HTMX + Alpine.js
-- 
 ---
 
 ## Что реализовано
